@@ -1,0 +1,93 @@
+# Formal equivalence for the supplied competition cases.
+
+design -reset
+read_verilog tests/competition_case/test1/test1.v
+prep -top test1
+design -stash comp1_gold
+design -reset
+read_verilog tests/competition_case/test1/test1.v
+synth -top test1 -lut 4 -run begin:fine
+opt -fast -full
+memory_map
+opt -full
+pmux_opt -abc -lut 4
+opt -fast
+design -stash comp1_gate
+design -copy-from comp1_gold -as gold test1
+design -copy-from comp1_gate -as gate test1
+equiv_make gold gate equiv_test1
+hierarchy -top equiv_test1
+async2sync
+memory_map
+equiv_simple
+equiv_induct
+equiv_status -assert
+
+design -reset
+read_verilog tests/competition_case/test2/test2.v
+prep -top test2
+design -stash comp2_gold
+design -reset
+read_verilog tests/competition_case/test2/test2.v
+synth -top test2 -lut 4 -run begin:fine
+opt -fast -full
+memory_map
+opt -full
+pmux_opt -abc -lut 4 -no-explore
+opt -fast
+design -stash comp2_gate
+design -copy-from comp2_gold -as gold test2
+design -copy-from comp2_gate -as gate test2
+equiv_make gold gate equiv_test2
+hierarchy -top equiv_test2
+equiv_simple
+equiv_status -assert
+
+design -reset
+read_verilog tests/competition_case/test3/test3.v
+prep -top test3
+design -stash comp3_gold
+design -reset
+read_verilog tests/competition_case/test3/test3.v
+synth -top test3 -lut 4 -run begin:fine
+opt -fast -full
+memory_map
+opt -full
+pmux_opt -abc -lut 4
+opt -fast
+design -stash comp3_gate
+design -copy-from comp3_gold -as gold test3
+design -copy-from comp3_gate -as gate test3
+equiv_make gold gate equiv_test3
+hierarchy -top equiv_test3
+async2sync
+memory_map
+equiv_simple
+equiv_induct
+equiv_status -assert
+
+design -reset
+read_verilog tests/competition_case/test4/test4.v
+prep -top test4
+design -stash comp4_gold
+design -reset
+read_verilog tests/competition_case/test4/test4.v
+synth -top test4 -lut 4 -run begin:fine
+opt -fast -full
+memory_map
+opt -full
+pmux_opt -abc -lut 4 -no-explore
+opt -fast
+design -stash comp4_gate
+design -copy-from comp4_gold -as gold test4
+design -copy-from comp4_gate -as gate test4
+equiv_make gold gate equiv_test4
+hierarchy -top equiv_test4
+async2sync
+memory_map
+equiv_simple
+equiv_induct
+equiv_status -assert
+
+design -reset
+log "All supplied competition cases passed equivalence checking."

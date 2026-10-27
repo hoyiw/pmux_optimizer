@@ -1,0 +1,5 @@
+metric,value,limit
+coarse_cells,984,<=1000
+runtime_seconds,28.98,<=60
+peak_memory_mib,225.9,<=2048
+equivalence,passed,required

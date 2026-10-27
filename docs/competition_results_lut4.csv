@@ -1,0 +1,5 @@
+top,lut_size,baseline_cells,pmux_candidate_cells,selected_cells,selected_flow,reduction_percent
+test1,4,1047,767,767,pmux_opt,26.74
+test2,4,26,15,15,pmux_opt,42.31
+test3,4,58,48,48,pmux_opt,17.24
+test4,4,89,39,39,pmux_opt,56.18

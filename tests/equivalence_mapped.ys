@@ -1,0 +1,56 @@
+# Prove that the complete structural + ABC mapping flow is equivalent to
+# unprepared RTL for each benchmark.
+
+design -reset
+read_verilog tests/verilog/single_pmux.v
+prep -top single_pmux
+design -stash map_single_gold
+design -reset
+read_verilog tests/verilog/single_pmux.v
+synth -top single_pmux -lut 4 -run begin:fine
+pmux_opt -abc -lut 4
+opt -fast
+design -stash map_single_gate
+design -copy-from map_single_gold -as gold single_pmux
+design -copy-from map_single_gate -as gate single_pmux
+equiv_make gold gate equiv_map_single
+hierarchy -top equiv_map_single
+equiv_simple
+equiv_status -assert
+
+design -reset
+read_verilog tests/verilog/bit_plane.v
+prep -top bit_plane
+design -stash map_plane_gold
+design -reset
+read_verilog tests/verilog/bit_plane.v
+synth -top bit_plane -lut 4 -run begin:fine
+pmux_opt -abc -lut 4
+opt -fast
+design -stash map_plane_gate
+design -copy-from map_plane_gold -as gold bit_plane
+design -copy-from map_plane_gate -as gate bit_plane
+equiv_make gold gate equiv_map_plane
+hierarchy -top equiv_map_plane
+equiv_simple
+equiv_status -assert
+
+design -reset
+read_verilog tests/verilog/stress_pmux.v
+prep -top stress_pmux
+design -stash map_stress_gold
+design -reset
+read_verilog tests/verilog/stress_pmux.v
+synth -top stress_pmux -lut 4 -run begin:fine
+pmux_opt -abc -lut 4
+opt -fast
+design -stash map_stress_gate
+design -copy-from map_stress_gold -as gold stress_pmux
+design -copy-from map_stress_gate -as gate stress_pmux
+equiv_make gold gate equiv_map_stress
+hierarchy -top equiv_map_stress
+equiv_simple
+equiv_status -assert
+
+design -reset
+log "All mapped PMUX equivalence checks passed."

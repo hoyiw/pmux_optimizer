@@ -1,0 +1,60 @@
+# Usage:
+#   yosys -m /path/to/pmux_opt.so -s equivalence.ys
+#
+# The gate copy is optimised before equiv_make. This exercises both the
+# structural rewrite and Yosys' SAT-based combinational equivalence check.
+
+design -reset
+read_verilog tests/verilog/single_pmux.v
+prep -top single_pmux
+design -save single_gold
+pmux_opt -no-pack
+design -save single_gate
+design -copy-from single_gold -as gold single_pmux
+design -copy-from single_gate -as gate single_pmux
+equiv_make gold gate equiv_single
+hierarchy -top equiv_single
+equiv_simple
+equiv_status -assert
+
+design -reset
+read_verilog tests/verilog/mixed_pmux.v
+prep -top mixed_pmux
+design -save mixed_gold
+pmux_opt
+design -save mixed_gate
+design -copy-from mixed_gold -as gold mixed_pmux
+design -copy-from mixed_gate -as gate mixed_pmux
+equiv_make gold gate equiv_mixed
+hierarchy -top equiv_mixed
+equiv_simple
+equiv_status -assert
+
+design -reset
+read_verilog tests/verilog/bit_plane.v
+prep -top bit_plane
+design -save plane_gold
+pmux_opt
+design -save plane_gate
+design -copy-from plane_gold -as gold bit_plane
+design -copy-from plane_gate -as gate bit_plane
+equiv_make gold gate equiv_plane
+hierarchy -top equiv_plane
+equiv_simple
+equiv_status -assert
+
+design -reset
+read_verilog tests/verilog/stress_pmux.v
+prep -top stress_pmux
+design -save stress_gold
+pmux_opt
+design -save stress_gate
+design -copy-from stress_gold -as gold stress_pmux
+design -copy-from stress_gate -as gate stress_pmux
+equiv_make gold gate equiv_stress
+hierarchy -top equiv_stress
+equiv_simple
+equiv_status -assert
+
+design -reset
+log "All PMUX equivalence checks passed."
